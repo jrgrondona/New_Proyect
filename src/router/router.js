@@ -11,8 +11,7 @@ router.get('/', (req, res)=>{
 });
 //Devuelve a todos los clientes activos de nuestra base de datos 
 router.get('/cliente',(req, res)=>{
-    // res.send('Listado de clientes');
-    const query='select * from cliente';
+        const query='select * from cliente';
             mysqlConeccion.query(query, (err, rows)=>{
                 if(!err){
                     res.json(rows);
@@ -21,6 +20,17 @@ router.get('/cliente',(req, res)=>{
                 }
             })
         });    
+//Devuelve a un cliente puntual
+router.get('/cliente/:id',(req, res)=>{
+    const {id} = req.params;
+      mysqlConeccion.query('select * from cliente where id = ?',[id], (err, rows)=>{
+        if(!err){
+            res.json(rows);
+        }else{
+            console.log(err)
+        }
+    })
+});
 //metodo para insertar cliente por el metodo POST
 router.post('/cliente',(req, res)=>{
     const { nombre, apellido, estado } =req.body
@@ -33,4 +43,16 @@ router.post('/cliente',(req, res)=>{
                 }
             })
         });
+//Eliminacion logica de clientes por delete.
+router.delete('/cliente/:id',(req, res)=>{
+    const {id} = req.params;
+      mysqlConeccion.query(`UPDATE cliente SET estado = 0 WHERE id = ?`,[id], (err)=>{
+        if(!err){
+            res.send('Se modificó correctamente a estado 0 el id: '+id);
+        }else{
+            console.log(err)
+        }
+    })
+});
 module.exports = router;
+

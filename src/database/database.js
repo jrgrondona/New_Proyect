@@ -15,5 +15,5 @@ mysqlConeccion.connect(function(err){
         console.log('Mi coneccion se realizo correctamente');
     }
 })
- 
+
 module.exports= mysqlConeccion;
