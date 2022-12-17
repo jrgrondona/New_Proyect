@@ -43,7 +43,7 @@ router.post('/cliente',(req, res)=>{
                 }
             })
         });
-//metodo para actualizar datos del cliente por el metodo PUT
+//Se agrega metodo para actualizar datos del cliente por el metodo PUT
 router.put('/cliente/:id',(req, res)=>{
     let id = req.params.id
     const {nombre, apellido, estado} =req.body
