@@ -37,7 +37,20 @@ router.post('/cliente',(req, res)=>{
     let query=`INSERT INTO cliente (nombre, apellido, estado, tms) VALUES ('${nombre}','${apellido}','${estado}',NOW())`;
             mysqlConeccion.query(query, (err)=>{
                 if(!err){
-                    res.send('Se inserto correctamente nuestro dato: ');
+                    res.send('Se inserto correctamente nuestros datos');
+                }else{
+                    console.log(err)
+                }
+            })
+        });
+//metodo para actualizar datos del cliente por el metodo PUT
+router.put('/cliente/:id',(req, res)=>{
+    let id = req.params.id
+    const {nombre, apellido, estado} =req.body
+    let query=`UPDATE cliente SET nombre='${nombre}', apellido='${apellido}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se actualizó datos del cliente id: '+id+'');
                 }else{
                     console.log(err)
                 }
@@ -48,11 +61,10 @@ router.delete('/cliente/:id',(req, res)=>{
     const {id} = req.params;
       mysqlConeccion.query(`UPDATE cliente SET estado = 0 WHERE id = ?`,[id], (err)=>{
         if(!err){
-            res.send('Se modificó correctamente a estado 0 el id: '+id);
+            res.send('Se modificó correctamente a estado 0 el id: '+id+'');
         }else{
             console.log(err)
         }
     })
 });
 module.exports = router;
-
