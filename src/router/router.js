@@ -67,4 +67,41 @@ router.delete('/cliente/:id',(req, res)=>{
         }
     })
 });
+
+//Devuelve a todos los productos de nuestra base de datos 
+router.get('/productos',(req, res)=>{
+    const query='select * from productos';
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                res.json(rows);
+            }else{
+                console.log(err)
+            }
+        })
+    });    
+//Devuelve un producto puntual
+router.get('/productos/:id',(req, res)=>{
+    const {id} = req.params;
+      mysqlConeccion.query('select * from productos where id = ?',[id], (err, rows)=>{
+        if(!err){
+            res.json(rows);
+        }else{
+            console.log(err)
+        }
+    })
+});
+//metodo para insertar productos por el metodo POST
+router.post('/productos',(req, res)=>{
+    const { nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock } =req.body
+    let query=`INSERT INTO productos (nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock,tms) 
+    VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}','${precio_venta}','${estado}','${stock}',NOW())`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se inserto correctamente nuestros datos');
+                }else{
+                    console.log(err)
+                }
+            })
+        });
+
 module.exports = router;

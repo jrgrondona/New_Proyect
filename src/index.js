@@ -4,7 +4,7 @@ app.use(express.json());
 
 const morgan =require('morgan');
 //configuraciones
-app.set('puerto' , process.env.PORT || 2022);
+app.set('puerto' , process.env.PORT || 2023);
 // middlewares
 app.use(morgan('runs'));
 //  rutas para mi aplicacion
