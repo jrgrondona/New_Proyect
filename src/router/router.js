@@ -67,7 +67,7 @@ router.delete('/cliente/:id',(req, res)=>{
         }
     })
 });
-
+////////////// PRODUCTOS //////////////
 //Devuelve a todos los productos de nuestra base de datos 
 router.get('/productos',(req, res)=>{
     const query='select * from productos';
@@ -94,7 +94,7 @@ router.get('/productos/:id',(req, res)=>{
 router.post('/productos',(req, res)=>{
     const { nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock } =req.body
     let query=`INSERT INTO productos (nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock,tms) 
-    VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}','${precio_venta}','${estado}','${stock}',NOW())`;
+    VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}', '${precio_venta}','${estado}','${stock}',NOW())`;
             mysqlConeccion.query(query, (err)=>{
                 if(!err){
                     res.send('Se inserto correctamente nuestros datos');
@@ -103,5 +103,28 @@ router.post('/productos',(req, res)=>{
                 }
             })
         });
-
+//Metodo para actualizar datos de productos por el metodo PUT
+router.put('/productos/:id',(req, res)=>{
+    let id = req.params.id
+    const {nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock} =req.body
+    let query=`UPDATE productos SET nombre='${nombre}', descripcion='${descripcion}', id_marca='${id_marca}', precio_costo='${precio_costo}', precio_venta='${precio_venta}', estado='${estado}', stock='${stock}', tms=NOW() WHERE id='${id}'`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se actualizó datos del producto id: '+id+' Descripcion: '+descripcion+'');
+                }else{
+                    console.log(err)
+                }
+            })
+        });
+//Eliminacion logica de producto por delete.
+router.delete('/productos/:id',(req, res)=>{
+    const {id} = req.params;
+      mysqlConeccion.query(`UPDATE productos SET estado = 0 WHERE id = ?`,[id], (err)=>{
+        if(!err){
+            res.send('Se modificó correctamente a estado 0 el id: '+id+'');
+        }else{
+            console.log(err)
+        }
+    })
+});
 module.exports = router;
