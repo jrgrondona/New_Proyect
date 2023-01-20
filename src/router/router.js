@@ -7,7 +7,7 @@ const mysqlConeccion = require('../database/database');
 
 ///////ruta raiz
 router.get('/', (req, res)=>{
-    res.send('Pantalla Inicio de nuestra aplicacion');
+    res.send('Pantalla Inicio de App');
 });
 //Devuelve a todos los clientes activos de nuestra base de datos 
 router.get('/cliente',(req, res)=>{
@@ -127,4 +127,39 @@ router.delete('/productos/:id',(req, res)=>{
         }
     })
 });
+////////////// USUARIOS //////////////
+//Devuelve a todos los usuarios activos de nuestra DB 
+router.get('/usuarios',(req, res)=>{
+        const query='select * from usuarios';
+            mysqlConeccion.query(query, (err, rows)=>{
+                if(!err){
+                    res.json(rows);
+                }else{
+                    console.log(err)
+                }
+            })
+        });    
+//Devuelve a un usuario puntual
+router.get('/usuarios/:id_usuario',(req, res)=>{
+    const {id} = req.params;
+      mysqlConeccion.query('select * from usuarios where id_usuario = ?',[id], (err, rows)=>{
+        if(!err){
+            res.json(rows);
+        }else{
+            console.log(err)
+        }
+    })
+});
+//metodo para crear usuario por el metodo POST
+router.post('/registro',(req, res)=>{
+    const {username, password, email, apellido_nombre} =req.body
+    let query=`INSERT INTO usuarios (username, password, email, apellido_nombre, fecha_creacion) VALUES ('${username}','${password}','${email}','${apellido_nombre}',NOW())`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se inserto correctamente nuevo usuario '+apellido_nombre);
+                }else{
+                    res.send('Ocurrio un error en el servidor '+err);
+                }
+            })
+        });
 module.exports = router;
