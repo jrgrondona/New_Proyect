@@ -1,5 +1,6 @@
 const express= require('express');
 const router = express();
+const cors = require('cors');
 
 //////archivo de coneccion
 const mysqlConeccion = require('../database/database');
