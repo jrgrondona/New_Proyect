@@ -67,9 +67,13 @@ router.post('/cliente', verificarToken, (req, res)=>{
     })
 });
 //Se agrega metodo para actualizar datos del cliente por el metodo PUT
-router.put('/cliente/:id',(req, res)=>{
+router.put('/cliente/:id', verificarToken, (req, res)=>{
     let id = req.params.id
     const {nombre, apellido, estado} =req.body
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
     let query=`UPDATE cliente SET nombre='${nombre}', apellido='${apellido}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
             mysqlConeccion.query(query, (err)=>{
                 if(!err){
@@ -77,31 +81,46 @@ router.put('/cliente/:id',(req, res)=>{
                 }else{
                     console.log(err)
                 }
-            })
-        });
+            });
+        }
+    });
+});
 //Eliminacion logica de clientes por delete.
-router.delete('/cliente/:id',(req, res)=>{
-    const {id} = req.params;
-      mysqlConeccion.query(`UPDATE cliente SET estado = 0 WHERE id = ?`,[id], (err)=>{
-        if(!err){
-            res.send('Se modificó correctamente a estado 0 el id: '+id+'');
+router.delete('/cliente/:id',verificarToken, (req, res)=>{
+    let id  = req.params.id; 
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
         }else{
-            console.log(err)
+            let query=`UPDATE cliente SET estado = 0 WHERE id = '${id}'`;
+        mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se eliminó lógicamente el id : '+id);
+                }else{
+                    res.send('El error  es : '+ err); 
+                }
+            })
         }
     })
 });
 ////////////// PRODUCTOS //////////////
 //Devuelve a todos los productos de nuestra base de datos 
-router.get('/productos',(req, res)=>{
-    const query='select * from productos';
-        mysqlConeccion.query(query, (err, rows)=>{
+router.get('/productos',verificarToken, (req, res)=>{
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+        mysqlConeccion.query('select * from productos', (err, registro)=>{
             if(!err){
-                res.json(rows);
+
+                res.json(registro);
             }else{
                 console.log(err)
             }
         })
-    });    
+        }
+    })
+});
 //Devuelve un producto puntual
 router.get('/productos/:id', verificarToken,(req, res)=>{
     // const {id} = req.params;
@@ -115,7 +134,6 @@ router.get('/productos/:id', verificarToken,(req, res)=>{
     }else{
         jwt.verify(req.token, 'bazarKey', (error, valido)=>{
             if(error){
-                // console.log(' entra aca')
                 res.sendStatus(403);
             }else{
                 mysqlConeccion.query('select * from productos where id=?',[parametro], (err, rows)=>{
@@ -143,8 +161,12 @@ router.get('/productos/:id', verificarToken,(req, res)=>{
     }
 })
 //metodo para insertar productos por el metodo POST
-router.post('/productos',(req, res)=>{
+router.post('/productos', verificarToken,(req, res)=>{
     const { nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock } =req.body
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
     let query=`INSERT INTO productos (nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock,tms) 
     VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}', '${precio_venta}','${estado}','${stock}',NOW())`;
             mysqlConeccion.query(query, (err)=>{
@@ -154,28 +176,43 @@ router.post('/productos',(req, res)=>{
                     console.log(err)
                 }
             })
-        });
+        }
+    })
+});
 //Metodo para actualizar datos de productos por el metodo PUT
-router.put('/productos/:id',(req, res)=>{
+router.put('/productos/:id', verificarToken, (req, res)=>{
     let id = req.params.id
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
     const {nombre, descripcion, id_marca, precio_costo, precio_venta, estado, stock} =req.body
     let query=`UPDATE productos SET nombre='${nombre}', descripcion='${descripcion}', id_marca='${id_marca}', precio_costo='${precio_costo}', precio_venta='${precio_venta}', estado='${estado}', stock='${stock}', tms=NOW() WHERE id='${id}'`;
-            mysqlConeccion.query(query, (err)=>{
-                if(!err){
-                    res.send('Se actualizó datos del producto id: '+id+' Descripcion: '+descripcion+'');
-                }else{
-                    console.log(err)
-                }
-            })
-        });
-//Eliminacion logica de producto por delete.
-router.delete('/productos/:id',(req, res)=>{
-    const {id} = req.params;
-      mysqlConeccion.query(`UPDATE productos SET estado = 0 WHERE id = ?`,[id], (err)=>{
+    mysqlConeccion.query(query, (err, registros)=>{
         if(!err){
-            res.send('Se modificó correctamente a estado 0 el id: '+id+'');
+            res.send('Se actualizó datos del producto id: '+id+' Descripcion: '+descripcion+'');
         }else{
             console.log(err)
+        }
+     });
+    }
+  });
+});
+//Eliminacion logica de producto por delete.
+router.delete('/productos/:id',verificarToken, (req, res)=>{
+    let id  = req.params.id; 
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+            let query=`UPDATE productos SET estado = 0 WHERE id = '${id}'`;
+        mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se eliminó lógicamente el id : '+id);
+                }else{
+                    res.send('El error  es : '+ err); 
+                }
+            })
         }
     })
 });
@@ -183,8 +220,7 @@ router.delete('/productos/:id',(req, res)=>{
 //////////////Usuarios /////////
 ////////////// /////////////////
 router.get('/usuarios', verificarToken, (req, res)=>{
-
-    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+  jwt.verify(req.token, 'bazarKey', (error, valido)=>{
     if(error){
         res.sendStatus(403);
     }else{
@@ -194,14 +230,13 @@ router.get('/usuarios', verificarToken, (req, res)=>{
         res.json(registro);
     }else{
         console.log(err)
-    }
-})
-}
+       }
+     })
+   }
 
-})
+  })
 
 });
-
 ////////////login de usuarios //////////////
 router.post('/login', (req, res)=>{
 const {username, password} =req.body
