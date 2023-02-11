@@ -1,6 +1,6 @@
 const express= require('express');
 const router = express();
-const cors = require('cors');
+// const cors = require('cors')
 // para encriptar password
 const bcrypt= require('bcrypt');
 // Para generar token
@@ -14,23 +14,34 @@ const mysqlConeccion = require('../database/database');
 router.get('/', (req, res)=>{
     res.send('Pantalla Inicio de App');
 });
-//Devuelve a todos los clientes activos de nuestra base de datos 
-router.get('/cliente', verificarToken, (req, res)=>{
-    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
-        if(error){
-            res.sendStatus(403);
-        }else{
-        mysqlConeccion.query('select * from cliente', (err, registro)=>{
+// Endpoint solo para test
+router.get('/cliente',(req, res)=>{
+    const query='select * from cliente ORDER BY estado ASC';
+        mysqlConeccion.query(query, (err, rows)=>{
             if(!err){
-
-                res.json(registro);
+                res.json(rows);
             }else{
                 console.log(err)
             }
         })
-        }
-    })
-});
+    });    
+//Devuelve a todos los clientes activos de nuestra base de datos 
+// router.get('/cliente', verificarToken, (req, res)=>{
+//     jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+//         if(error){
+//             res.sendStatus(403);
+//         }else{
+//         mysqlConeccion.query('select * from cliente', (err, registro)=>{
+//             if(!err){
+
+//                 res.json(registro);
+//             }else{
+//                 console.log(err)
+//             }
+//         })
+//         } 
+//     })
+// });
 //Devuelve a un cliente puntual
 router.get('/cliente/:id', verificarToken, (req, res)=>{
     const  { id } = req.params;
@@ -58,7 +69,7 @@ router.post('/cliente', verificarToken, (req, res)=>{
             let query=`INSERT INTO cliente (nombre, apellido, estado, tms) VALUES ('${nombre}','${apellido}','${estado}',NOW())`;
             mysqlConeccion.query(query, (err, registros)=>{
                 if(!err){
-                    res.send('Se inserto correctamente nuestro dato: '+nombre);
+                    res.send('Se agregó nuevo cliente : '+nombre);
                 }else{
                     console.log(err)
                 }
@@ -86,7 +97,7 @@ router.put('/cliente/:id', verificarToken, (req, res)=>{
     });
 });
 //Eliminacion logica de clientes por delete.
-router.delete('/cliente/:id',verificarToken, (req, res)=>{
+router.put('/cliente/:id',verificarToken, (req, res)=>{
     let id  = req.params.id; 
     jwt.verify(req.token, 'bazarKey', (error, valido)=>{
         if(error){
@@ -103,6 +114,46 @@ router.delete('/cliente/:id',verificarToken, (req, res)=>{
         }
     })
 });
+router.get('/usuarios',(req, res)=>{
+    const query='select * from usuarios ORDER BY estado ASC';
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                res.json(rows);
+            }else{
+                console.log(err)
+            }
+        })
+    });
+//// baja de un cliente ////        
+router.put('/bajacliente/:id',(req, res)=>{
+    let id = req.params.id
+    let query=`UPDATE cliente SET estado= 0 WHERE id='${id}'`;
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                 res.json({
+                    status: true,
+                    mensaje:'El cliente fue dado de baja'
+                }) 
+             }else{
+                 console.log(err)
+         }
+     })
+  });
+//// alta de cliente ///
+router.put('/altacliente/:id',(req, res)=>{
+    let id = req.params.id
+    let query=`UPDATE cliente SET estado= 1 WHERE id='${id}'`;
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                 res.json({
+                    status: true,
+                    mensaje:'El cliente fue dado de Alta'
+                }) 
+             }else{
+                 console.log(err)
+         }
+     })
+  });      
 ////////////// PRODUCTOS //////////////
 //Devuelve a todos los productos de nuestra base de datos 
 router.get('/productos',verificarToken, (req, res)=>{
@@ -123,7 +174,6 @@ router.get('/productos',verificarToken, (req, res)=>{
 });
 //Devuelve un producto puntual
 router.get('/productos/:id', verificarToken,(req, res)=>{
-    // const {id} = req.params;
     const  parametro  = req.params.id
     if(esNumero(parametro)){
         res.json(
@@ -216,27 +266,109 @@ router.delete('/productos/:id',verificarToken, (req, res)=>{
         }
     })
 });
+
+///////// MARCAS ///////////
+router.get('/marcas',(req, res)=>{
+    const query='select * from marcas ORDER BY estado ASC';
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                res.json(rows);
+            }else{
+                console.log(err)
+            }
+        })
+    });
+//// baja de marca ////
+ router.put('/bajamarca/:id',(req, res)=>{
+        let id = req.params.id
+        let query=`UPDATE marcas SET estado= 0 WHERE id='${id}'`;
+            mysqlConeccion.query(query, (err, rows)=>{
+                if(!err){
+                     res.json({
+                        status: true,
+                        mensaje:'La marca fue dada de baja'
+                    }) 
+                 }else{
+                     console.log(err)
+             }
+         })
+      });
+    //// alta de marca ////
+    router.put('/altamarca/:id',(req, res)=>{
+        let id = req.params.id
+        let query=`UPDATE marcas SET estado= 1 WHERE id='${id}'`;
+            mysqlConeccion.query(query, (err, rows)=>{
+                if(!err){
+                     res.json({
+                        status: true,
+                        mensaje:'La marca fue dado de Alta'
+                    }) 
+                 }else{
+                     console.log(err)
+             }
+         })
+      });          
 ////////////// /////////////////
 //////////////Usuarios /////////
 ////////////// /////////////////
-router.get('/usuarios', verificarToken, (req, res)=>{
-  jwt.verify(req.token, 'bazarKey', (error, valido)=>{
-    if(error){
-        res.sendStatus(403);
-    }else{
-        mysqlConeccion.query('select * from usuarios', (err, registro)=>{
-    if(!err){
-        // console.log(registro.length)
-        res.json(registro);
-    }else{
-        console.log(err)
-       }
+// router.get('/usuarios', verificarToken, (req, res)=>{
+//   jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+//     if(error){
+//         res.sendStatus(403);
+//     }else{
+//         mysqlConeccion.query('select * from usuarios', (err, registro)=>{
+//     if(!err){
+//         // console.log(registro.length)
+//         res.json(registro);
+//     }else{
+//         console.log(err)
+//        }
+//      })
+//    }
+
+//   })
+
+// });
+router.get('/usuarios',(req, res)=>{
+    const query='select * from usuarios ORDER BY estado ASC';
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                res.json(rows);
+            }else{
+                console.log(err)
+            }
+        })
+    });
+//// baja de un usuario ////        
+router.put('/bajausuario/:id_usuario',(req, res)=>{
+    let id_usuario = req.params.id_usuario
+    let query=`UPDATE usuarios SET estado= 0 WHERE id_usuario='${id_usuario}'`;
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                 res.json({
+                    status: true,
+                    mensaje:'El usuario fue dado de baja'
+                }) 
+             }else{
+                 console.log(err)
+         }
      })
-   }
-
-  })
-
-});
+  });
+  //// alta de usuario ///
+  router.put('/altausuario/:id_usuario',(req, res)=>{
+    let id_usuario = req.params.id_usuario
+    let query=`UPDATE usuarios SET estado= 1 WHERE id_usuario='${id_usuario}'`;
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                 res.json({
+                    status: true,
+                    mensaje:'El usuario fue dado de Alta'
+                }) 
+             }else{
+                 console.log(err)
+         }
+     })
+  });        
 ////////////login de usuarios //////////////
 router.post('/login', (req, res)=>{
 const {username, password} =req.body
@@ -293,13 +425,15 @@ let hash = bcrypt.hashSync(password,10);
 let query=`INSERT INTO usuarios (username, password, email, apellido_nombre, fecha_creacion) VALUES ('${username}','${hash}','${email}','${apellido_nombre}',NOW())`;
 mysqlConeccion.query(query, (err, registros)=>{
     if(!err){
-        res.send('Se inserto correctamente nuestro usuario: '+username);
+        res.json({
+            status: true,
+            mensaje:"El usuario se creó correctamente"
+        });
     }else{
         res.send('Ocurrio un error desde el servidor'+err);
     }
 })
 });
-
 router.put('/resetpassword/:id', (req, res)=>{
 // asigna a id_usuario el valor que recibe por el parametro 
  let id  = req.params.id;
