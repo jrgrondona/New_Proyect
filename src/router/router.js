@@ -156,22 +156,32 @@ router.put('/altacliente/:id',(req, res)=>{
   });      
 ////////////// PRODUCTOS //////////////
 //Devuelve a todos los productos de nuestra base de datos 
-router.get('/productos',verificarToken, (req, res)=>{
-    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
-        if(error){
-            res.sendStatus(403);
-        }else{
-        mysqlConeccion.query('select * from productos', (err, registro)=>{
-            if(!err){
+// router.get('/productos',verificarToken, (req, res)=>{
+//     jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+//         if(error){
+//             res.sendStatus(403);
+//         }else{
+//         mysqlConeccion.query('select * from productos', (err, registro)=>{
+//             if(!err){
 
-                res.json(registro);
+//                 res.json(registro);
+//             }else{
+//                 console.log(err)
+//             }
+//         })
+//         }
+//     })
+// });
+router.get('/productos',(req, res)=>{
+    const query='SELECT * ,(precio_venta-precio_costo) AS Ganancia FROM bazar_capicua.productos';
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                res.json(rows);
             }else{
                 console.log(err)
             }
         })
-        }
-    })
-});
+    });    
 //Devuelve un producto puntual
 router.get('/productos/:id', verificarToken,(req, res)=>{
     const  parametro  = req.params.id
@@ -228,6 +238,19 @@ router.post('/productos', verificarToken,(req, res)=>{
             })
         }
     })
+});
+router.post('/agregarproductos', (req, res)=>{
+    const { nombre, descripcion, id_marca, precio_costo, precio_venta, stock } =req.body
+    let query=`INSERT INTO productos (nombre, descripcion, id_marca, precio_costo, precio_venta, stock,tms) 
+    VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}','${precio_venta}','${stock}',NOW())`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    console.log('llega')
+                    res.send('Se inserto correctamente nuestros datos');
+                }else{
+                    console.log(err)
+                }
+            })
 });
 //Metodo para actualizar datos de productos por el metodo PUT
 router.put('/productos/:id', verificarToken, (req, res)=>{
@@ -307,7 +330,20 @@ router.get('/marcas',(req, res)=>{
                      console.log(err)
              }
          })
-      });          
+      }); 
+///// Agregar Marcas /////
+router.post('/AgregarMarcas', (req, res)=>{
+    const { nombre } =req.body
+            let query=`INSERT INTO marcas (nombre, tms) VALUES ('${nombre}',NOW())`;
+                mysqlConeccion.query(query, (err, registros)=>{
+                    if(!err){
+                        console.log('Acá llega')
+                        res.send('Se agregó nueva marca : '+nombre);
+                    }else{
+                        console.log(err)
+                    }
+                })
+     });               
 ////////////// /////////////////
 //////////////Usuarios /////////
 ////////////// /////////////////
