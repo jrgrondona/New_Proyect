@@ -343,7 +343,18 @@ router.post('/AgregarMarcas', (req, res)=>{
                         console.log(err)
                     }
                 })
-     });               
+     });
+///// PROVEEDORES ///////
+router.get('/proveedor',(req, res)=>{
+    const query='select * from proveedor ORDER BY estado ASC';
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                res.json(rows);
+            }else{
+                console.log(err)
+            }
+        })
+    });                   
 ////////////// /////////////////
 //////////////Usuarios /////////
 ////////////// /////////////////
