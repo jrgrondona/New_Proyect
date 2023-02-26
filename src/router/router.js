@@ -6,13 +6,13 @@ const bcrypt = require('bcrypt');
 // Para generar token
 const jwt = require('jsonwebtoken');
 
-//////archivo de coneccion
+//////coneccion a la db
 const mysqlConeccion = require('../database/database');
 //////fin archivo de coneccion
 
-///////ruta raiz
+/// rut de inicio
 router.get('/', (req, res) => {
-    res.send('Pantalla Inicio de App');
+    res.send('Pantalla Inicio');
 });
 // Devuelve a todos los clientes activos de nuestra base de datos ok !
 router.get('/cliente', verificarToken, (req, res) => {
@@ -122,6 +122,30 @@ router.put('/altacliente/:id', verificarToken, (req, res) => {
                     })
                 } else {
                     res.send('El error  es : ' + err);
+                }
+            })
+        }
+    })
+});
+//// Busca clientes por nombre o apellido ok ! ////
+router.post('/buscar_clientes', verificarToken, (req, res) => {
+    let { nombre, apellido } = req.body
+    jwt.verify(req.token, 'bazarKey', (error) => {
+        if (error) {
+            res.sendStatus(403);
+        } else {
+            var query = 'select * from cliente where 1 ';
+            if (nombre) {
+                query = query + `AND nombre like '%${nombre}%'`;
+            }
+            if (apellido) {
+                query = query + `AND apellido like '%${apellido}%'`;
+            }
+            mysqlConeccion.query(query, (err, rows) => {
+                if (!err) {
+                    res.json(rows);
+                } else {
+                    console.log(err)
                 }
             })
         }
@@ -361,7 +385,7 @@ router.put('/bajaproveedor/:id', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            let query =`UPDATE proveedor SET estado= 0 WHERE id='${id}'`;
+            let query = `UPDATE proveedor SET estado= 0 WHERE id='${id}'`;
             mysqlConeccion.query(query, (err) => {
                 if (!err) {
                     res.json({
@@ -382,7 +406,7 @@ router.put('/altaproveedor/:id', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            let query =`UPDATE proveedor SET estado= 1 WHERE id='${id}'`;
+            let query = `UPDATE proveedor SET estado= 1 WHERE id='${id}'`;
             mysqlConeccion.query(query, (err) => {
                 if (!err) {
                     res.json({
@@ -423,7 +447,7 @@ router.put('/bajausuario/:id_usuario', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            let query =`UPDATE usuarios SET estado= 0 WHERE id_usuario='${id_usuario}'`;
+            let query = `UPDATE usuarios SET estado= 0 WHERE id_usuario='${id_usuario}'`;
             mysqlConeccion.query(query, (err) => {
                 if (!err) {
                     res.json({
@@ -444,7 +468,7 @@ router.put('/altausuario/:id_usuario', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            let query =`UPDATE usuarios SET estado= 1 WHERE id_usuario='${id_usuario}'`;
+            let query = `UPDATE usuarios SET estado= 1 WHERE id_usuario='${id_usuario}'`;
             mysqlConeccion.query(query, (err) => {
                 if (!err) {
                     res.json({
