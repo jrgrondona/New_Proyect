@@ -12,35 +12,24 @@ const mysqlConeccion = require('../database/database');
 /// rut de inicio
 router.get('/', (req, res) => {
     res.send('Pantalla Inicio');
-});
-// Endpoint solo para test
-router.get('/cliente',(req, res)=>{
-    const query='select * from cliente ORDER BY estado ASC';
-        mysqlConeccion.query(query, (err, rows)=>{
+}); 
+// Devuelve a todos los clientes activos de nuestra base de datos 
+router.get('/cliente', verificarToken, (req, res)=>{
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+        mysqlConeccion.query('select * from cliente', (err, registro)=>{
             if(!err){
-                res.json(rows);
+
+                res.json(registro);
             }else{
                 console.log(err)
             }
         })
-    });    
-//Devuelve a todos los clientes activos de nuestra base de datos 
-// router.get('/cliente', verificarToken, (req, res)=>{
-//     jwt.verify(req.token, 'bazarKey', (error, valido)=>{
-//         if(error){
-//             res.sendStatus(403);
-//         }else{
-//         mysqlConeccion.query('select * from cliente', (err, registro)=>{
-//             if(!err){
-
-//                 res.json(registro);
-//             }else{
-//                 console.log(err)
-//             }
-//         })
-//         } 
-//     })
-// });
+        } 
+    })
+});
 //Devuelve a un cliente puntual
 router.get('/cliente/:id', verificarToken, (req, res)=>{
     const  { id } = req.params;
