@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express();
-// const cors = require('cors')
 // para encriptar password
 const bcrypt = require('bcrypt');
 // Para generar token
