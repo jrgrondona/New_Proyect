@@ -43,12 +43,9 @@ router.get('/cliente',(req, res)=>{
 //     })
 // });
 //Devuelve a un cliente puntual
-router.get('/cliente/:id', verificarToken, (req, res)=>{
+router.get('/cliente/:id',  (req, res)=>{
     const  { id } = req.params;
-    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
-        if(error){
-            res.sendStatus(403);
-        }else{
+    
             mysqlConeccion.query('select * from cliente where id=?',[id], (err, registros)=>{
                 if(!err){
                     res.json(registros);
@@ -56,9 +53,8 @@ router.get('/cliente/:id', verificarToken, (req, res)=>{
                     console.log(err)
                 }
             })
-        }
-    })
-});
+        });
+        
 //metodo para insertar cliente por el metodo POST
 router.post('/cliente', verificarToken, (req, res)=>{
     const { nombre, apellido, estado } =req.body
@@ -77,16 +73,18 @@ router.post('/cliente', verificarToken, (req, res)=>{
         }
     })
 });
-//Se agrega metodo para actualizar datos del cliente por el metodo PUT
-router.put('/cliente/:id', verificarToken, (req, res)=>{
+// metodo para actualizar datos del cliente por el metodo PUT
+router.put('/cliente/:id',  (req, res)=>{
     let id = req.params.id
     const {nombre, apellido, estado} =req.body
-    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
-        if(error){
-            res.sendStatus(403);
-        }else{
-    let query=`UPDATE cliente SET nombre='${nombre}', apellido='${apellido}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
+    // jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+    //     if(error){
+    //         res.sendStatus(403);
+    //     }else{
+    let query=`UPDATE cliente SET nombre='${nombre}', apellido='${apellido}', tms=NOW() WHERE id='${id}'`;
             mysqlConeccion.query(query, (err)=>{
+
+                
                 if(!err){
                     res.send('Se actualizó datos del cliente id: '+id+'');
                 }else{
@@ -94,8 +92,8 @@ router.put('/cliente/:id', verificarToken, (req, res)=>{
                 }
             });
         }
-    });
-});
+    );
+// });
 //Eliminacion logica de clientes por delete.
 router.put('/cliente/:id',verificarToken, (req, res)=>{
     let id  = req.params.id; 
@@ -271,6 +269,10 @@ router.put('/productos/:id', verificarToken, (req, res)=>{
     }
   });
 });
++
+
+
+
 //Eliminacion logica de producto por delete.
 router.delete('/productos/:id',verificarToken, (req, res)=>{
     let id  = req.params.id; 
