@@ -13,32 +13,43 @@ const mysqlConeccion = require('../database/database');
 router.get('/', (req, res) => {
     res.send('Pantalla Inicio');
 });
-// Devuelve a todos los clientes activos de nuestra base de datos ok !
-router.get('/cliente', verificarToken, (req, res) => {
-    jwt.verify(req.token, 'bazarKey', (error, valido) => {
-        if (error) {
-            res.sendStatus(403);
-        } else {
-            mysqlConeccion.query('select * from cliente', (err, registro) => {
-                if (!err) {
+// Endpoint solo para test
+router.get('/cliente',(req, res)=>{
+    const query='select * from cliente ORDER BY estado ASC';
+        mysqlConeccion.query(query, (err, rows)=>{
+            if(!err){
+                res.json(rows);
+            }else{
+                console.log(err)
+            }
+        })
+    });    
+//Devuelve a todos los clientes activos de nuestra base de datos 
+// router.get('/cliente', verificarToken, (req, res)=>{
+//     jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+//         if(error){
+//             res.sendStatus(403);
+//         }else{
+//         mysqlConeccion.query('select * from cliente', (err, registro)=>{
+//             if(!err){
 
-                    res.json(registro);
-                } else {
-                    console.log(err)
-                }
-            })
-        }
-    })
-});
-//Devuelve a un cliente puntual 
-router.get('/cliente/:id', verificarToken, (req, res) => {
-    const { id } = req.params;
-    jwt.verify(req.token, 'bazarKey', (error) => {
-        if (error) {
+//                 res.json(registro);
+//             }else{
+//                 console.log(err)
+//             }
+//         })
+//         } 
+//     })
+// });
+//Devuelve a un cliente puntual
+router.get('/cliente/:id', verificarToken, (req, res)=>{
+    const  { id } = req.params;
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
             res.sendStatus(403);
-        } else {
-            mysqlConeccion.query('select * from cliente where id=?', [id], (err, registros) => {
-                if (!err) {
+        }else{
+            mysqlConeccion.query('select * from cliente where id=?',[id], (err, registros)=>{
+                if(!err){
                     res.json(registros);
                 } else {
                     console.log(err)
@@ -47,11 +58,11 @@ router.get('/cliente/:id', verificarToken, (req, res) => {
         }
     })
 });
-//metodo para insertar cliente por el metodo POST ok!
-router.post('/cliente', verificarToken, (req, res) => {
-    const { nombre, apellido, estado } = req.body
-    jwt.verify(req.token, 'bazarKey', (error, valido) => {
-        if (error) {
+//metodo para insertar cliente por el metodo POST
+router.post('/cliente', verificarToken, (req, res)=>{
+    const { nombre, apellido, estado } =req.body
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
             res.sendStatus(403);
         } else {
             let query = `INSERT INTO cliente (nombre, apellido, estado, tms) VALUES ('${nombre}','${apellido}','${estado}',NOW())`;
@@ -66,29 +77,29 @@ router.post('/cliente', verificarToken, (req, res) => {
     })
 });
 //Se agrega metodo para actualizar datos del cliente por el metodo PUT
-router.put('/cliente/:id', verificarToken, (req, res) => {
+router.put('/cliente/:id', verificarToken, (req, res)=>{
     let id = req.params.id
-    const { nombre, apellido, estado } = req.body
-    jwt.verify(req.token, 'bazarKey', (error, valido) => {
-        if (error) {
+    const {nombre, apellido, estado} =req.body
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
             res.sendStatus(403);
-        } else {
-            let query = `UPDATE cliente SET nombre='${nombre}', apellido='${apellido}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
-            mysqlConeccion.query(query, (err) => {
-                if (!err) {
-                    res.send('Se actualizó datos del cliente id: ' + id + '');
-                } else {
+        }else{
+    let query=`UPDATE cliente SET nombre='${nombre}', apellido='${apellido}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se actualizó datos del cliente id: '+id+'');
+                }else{
                     console.log(err)
                 }
             });
         }
     });
 });
-//Eliminacion logica de clientes por PUT ok !
-router.put('/bajacliente/:id', verificarToken, (req, res) => {
-    let id = req.params.id;
-    jwt.verify(req.token, 'bazarKey', (error) => {
-        if (error) {
+//Eliminacion logica de clientes por delete.
+router.put('/cliente/:id',verificarToken, (req, res)=>{
+    let id  = req.params.id; 
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
             res.sendStatus(403);
         } else {
             let query = `UPDATE cliente SET estado = 0 WHERE id = '${id}'`;
@@ -244,6 +255,10 @@ router.put('/productos/:id', verificarToken, (req, res) => {
         }
     });
 });
++
+
+
+
 //Eliminacion logica de producto por delete.
 router.delete('/productos/:id', verificarToken, (req, res) => {
     let id = req.params.id;
