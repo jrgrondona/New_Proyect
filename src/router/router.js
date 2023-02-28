@@ -21,8 +21,7 @@ router.get('/cliente', verificarToken, (req, res)=>{
         }else{
         mysqlConeccion.query('select * from cliente', (err, registro)=>{
             if(!err){
-
-                res.json(registro);
+              res.json(registro);
             }else{
                 console.log(err)
             }
@@ -69,7 +68,7 @@ router.post('/cliente', verificarToken, (req, res)=>{
 router.put('/cliente/:id', verificarToken, (req, res)=>{
     let id = req.params.id
     const {nombre, apellido, estado} =req.body
-    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+    jwt.verify(req.token, 'bazarKey', (error)=>{
         if(error){
             res.sendStatus(403);
         }else{
@@ -118,6 +117,26 @@ router.put('/altacliente/:id', verificarToken, (req, res) => {
                     res.json({
                         status: true,
                         mensaje: 'El cliente fue dado de Alta'
+                    })
+                } else {
+                    res.send('El error  es : ' + err);
+                }
+            })
+        }
+    })
+});
+router.put('/bajacliente/:id', verificarToken, (req, res) => {
+    let id = req.params.id;
+    jwt.verify(req.token, 'bazarKey', (error) => {
+        if (error) {
+            res.sendStatus(403);
+        } else {
+            let query = `UPDATE cliente SET estado = 0 WHERE id = '${id}'`;
+            mysqlConeccion.query(query, (err) => {
+                if (!err) {
+                    res.json({
+                        status: true,
+                        mensaje: 'El cliente fue dado de Baja'
                     })
                 } else {
                     res.send('El error  es : ' + err);
@@ -208,13 +227,13 @@ router.get('/productos/:id', verificarToken, (req, res) => {
 })
 //metodo para insertar productos por el metodo POST está ok !
 router.post('/agregarproductos', verificarToken, (req, res) => {
-    const { nombre, descripcion, id_marca, precio_costo, precio_venta, cantidad } = req.body
+    const { nombre, descripcion, id_marca, precio_costo, precio_venta, stock } = req.body
     jwt.verify(req.token, 'bazarKey', (error) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            let query = `INSERT INTO productos (nombre, descripcion, id_marca, precio_costo, precio_venta, cantidad,tms) 
-    VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}', '${precio_venta}','${cantidad}',NOW())`;
+            let query = `INSERT INTO productos (nombre, descripcion, id_marca, precio_costo, precio_venta, stock,tms) 
+    VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}', '${precio_venta}','${stock}',NOW())`;
             mysqlConeccion.query(query, (err) => {
                 if (!err) {
                     res.send('Se inserto correctamente nuestros datos');
@@ -244,14 +263,10 @@ router.put('/productos/:id', verificarToken, (req, res) => {
         }
     });
 });
-+
-
-
-
 //Eliminacion logica de producto por delete.
 router.delete('/productos/:id', verificarToken, (req, res) => {
     let id = req.params.id;
-    jwt.verify(req.token, 'bazarKey', (error, valido) => {
+    jwt.verify(req.token, 'bazarKey', (error) => {
         if (error) {
             res.sendStatus(403);
         } else {
