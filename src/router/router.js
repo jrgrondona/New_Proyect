@@ -19,7 +19,7 @@ router.get('/cliente', verificarToken, (req, res)=>{
         if(error){
             res.sendStatus(403);
         }else{
-        mysqlConeccion.query('select * from cliente', (err, registro)=>{
+        mysqlConeccion.query('select *,DATE_FORMAT(tms,"%Y-%m-%d %H:%i") as fecha_de_carga from cliente', (err, registro)=>{
             if(!err){
               res.json(registro);
             }else{
@@ -176,7 +176,7 @@ router.get('/productos', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            mysqlConeccion.query('select * ,(precio_venta-precio_costo) AS Ganancia from productos', (err, registro) => {
+            mysqlConeccion.query('select * ,(precio_venta-precio_costo) AS Ganancia, DATE_FORMAT(tms,"%Y-%m-%d %H:%i") as fecha_de_carga from productos', (err, registro) => {
                 if (!err) {
 
                     res.json(registro);
@@ -263,6 +263,48 @@ router.put('/productos/:id', verificarToken, (req, res) => {
         }
     });
 });
+// alta de producto por PUT OK! 
+router.put('/altaproducto/:id', verificarToken, (req, res) => {
+    let id = req.params.id;
+    jwt.verify(req.token, 'bazarKey', (error) => {
+        if (error) {
+            res.sendStatus(403);
+        } else {
+            let query = `UPDATE productos SET estado = 1 WHERE id = '${id}'`;
+            mysqlConeccion.query(query, (err) => {
+                if (!err) {
+                    res.json({
+                        status: true,
+                        mensaje: 'Alta con éxito !'
+                    })
+                } else {
+                    res.send('El error  es : ' + err);
+                }
+            })
+        }
+    })
+});
+//// baja de producto por PUT ok ////
+router.put('/bajaproducto/:id', verificarToken, (req, res) => {
+    let id = req.params.id;
+    jwt.verify(req.token, 'bazarKey', (error) => {
+        if (error) {
+            res.sendStatus(403);
+        } else {
+            let query = `UPDATE productos SET estado = 0 WHERE id = '${id}'`;
+            mysqlConeccion.query(query, (err) => {
+                if (!err) {
+                    res.json({
+                        status: true,
+                        mensaje: 'Baja con éxito !'
+                    })
+                } else {
+                    res.send('El error  es : ' + err);
+                }
+            })
+        }
+    })
+});
 //Eliminacion logica de producto por delete.
 router.delete('/productos/:id', verificarToken, (req, res) => {
     let id = req.params.id;
@@ -289,7 +331,7 @@ router.get('/marcas', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            mysqlConeccion.query('select * from marcas ORDER BY estado ASC', (err, registro) => {
+            mysqlConeccion.query('select *,DATE_FORMAT(tms,"%Y-%m-%d %H:%i") as fecha_de_carga from marcas ORDER BY estado ASC', (err, registro) => {
                 if (!err) {
                     res.json(registro);
                 } else {
@@ -367,7 +409,7 @@ router.get('/proveedor', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            mysqlConeccion.query('select * from proveedor ORDER BY estado ASC', (err, registro) => {
+            mysqlConeccion.query('select *,DATE_FORMAT(tms,"%Y-%m-%d %H:%i") as fecha_de_carga from proveedor ORDER BY estado ASC', (err, registro) => {
                 if (!err) {
                     res.json(registro);
                 } else {
