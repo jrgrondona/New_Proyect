@@ -13,7 +13,7 @@ const mysqlConeccion = require('../database/database');
 router.get('/', (req, res) => {
     res.send('Pantalla Inicio');
 }); 
-// Devuelve a todos los clientes activos de nuestra base de datos 
+// Devuelve a todos los clientes de nuestra base de datos 
 router.get('/cliente', verificarToken, (req, res)=>{
     jwt.verify(req.token, 'bazarKey', (error, valido)=>{
         if(error){
@@ -46,6 +46,8 @@ router.get('/cliente/:id', verificarToken, (req, res)=>{
         }
     })
 });
+
+
 //metodo para insertar cliente por el metodo POST
 router.post('/cliente', verificarToken, (req, res)=>{
     const { nombre, apellido, estado } =req.body
@@ -76,6 +78,7 @@ router.put('/cliente/:id', verificarToken, (req, res)=>{
             mysqlConeccion.query(query, (err)=>{
                 if(!err){
                     res.send('Se actualizó datos del cliente id: '+id+'');
+                   console.log(query)
                 }else{
                     console.log(err)
                 }
@@ -83,6 +86,7 @@ router.put('/cliente/:id', verificarToken, (req, res)=>{
         }
     });
 });
+
 //Eliminacion logica de clientes por delete.
 router.put('/cliente/:id',verificarToken, (req, res)=>{
     let id  = req.params.id; 
@@ -341,6 +345,44 @@ router.get('/marcas', verificarToken, (req, res) => {
         }
     })
 });
+//Devuelve a una marca puntual
+router.get('/marcas/:id', verificarToken, (req, res)=>{
+    const  { id } = req.params;
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+            mysqlConeccion.query('select * from marcas where id=?',[id], (err, registros)=>{
+                if(!err){
+                    res.json(registros);
+                } else {
+                    console.log(err)
+                }
+            })
+        }
+    })
+});
+
+//Se agrega metodo para actualizar datos de la marca por el metodo PUT
+router.put('/marcas/:id', verificarToken, (req, res)=>{
+    let id = req.params.id
+    const {nombre , estado} =req.body
+    jwt.verify(req.token, 'bazarKey', (error)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+    let query=`UPDATE marcas SET nombre='${nombre}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se actualizó datos de la marca id: '+id+'');
+                   console.log(query)
+                }else{
+                    console.log(err)
+                }
+            });
+        }
+    });
+});
 //// baja de marca ok ////
 router.put('/bajamarca/:id', verificarToken, (req, res) => {
     let id = req.params.id;
@@ -551,7 +593,7 @@ router.post('/login', (req, res) => {
                 if (rows.length != 0) {
                     const bcryptPassword = bcrypt.compareSync(password, rows[0].password);
                     if (bcryptPassword) {
-                        jwt.sign({ rows }, 'bazarKey', { expiresIn: '3600s' }, (err, token) => {
+                        jwt.sign({ rows }, 'bazarKey', { expiresIn: '9600s' }, (err, token) => {
                             res.json(
                                 {
                                     status: true,
