@@ -55,7 +55,7 @@ router.post('/cliente', verificarToken, (req, res)=>{
         if(error){
             res.sendStatus(403);
         } else {
-            let query = `INSERT INTO cliente (nombre, apellido, estado, tms) VALUES ('${nombre}','${apellido}','${estado}',NOW())`;
+            let query = `INSERT INTO cliente (nombre, apellido, tms) VALUES ('${nombre}','${apellido}',NOW())`;
             mysqlConeccion.query(query, (err, registros) => {
                 if (!err) {
                     res.send('Se agregó nuevo cliente : ' + nombre);
