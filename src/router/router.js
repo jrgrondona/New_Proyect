@@ -50,12 +50,12 @@ router.get('/cliente/:id', verificarToken, (req, res)=>{
 
 //metodo para insertar cliente por el metodo POST
 router.post('/cliente', verificarToken, (req, res)=>{
-    const { nombre, apellido, estado } =req.body
+    const { nombre, apellido,tel,direc, estado } =req.body
     jwt.verify(req.token, 'bazarKey', (error, valido)=>{
         if(error){
             res.sendStatus(403);
         } else {
-            let query = `INSERT INTO cliente (nombre, apellido, tms) VALUES ('${nombre}','${apellido}',NOW())`;
+            let query = `INSERT INTO cliente (nombre, apellido,tel,direc, tms) VALUES ('${nombre}','${apellido}', '${tel}','${direc}',NOW())`;
             mysqlConeccion.query(query, (err, registros) => {
                 if (!err) {
                     res.send('Se agregó nuevo cliente : ' + nombre);
@@ -69,12 +69,12 @@ router.post('/cliente', verificarToken, (req, res)=>{
 //Se agrega metodo para actualizar datos del cliente por el metodo PUT
 router.put('/cliente/:id', verificarToken, (req, res)=>{
     let id = req.params.id
-    const {nombre, apellido, estado} =req.body
+    const {nombre, apellido,tel,direc, estado} =req.body
     jwt.verify(req.token, 'bazarKey', (error)=>{
         if(error){
             res.sendStatus(403);
         }else{
-    let query=`UPDATE cliente SET nombre='${nombre}', apellido='${apellido}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
+    let query=`UPDATE cliente SET nombre='${nombre}', apellido='${apellido}',tel='${tel}',direc='${direc}', estado='${estado}', tms=NOW() WHERE id='${id}'`;
             mysqlConeccion.query(query, (err)=>{
                 if(!err){
                     res.send('Se actualizó datos del cliente id: '+id+'');

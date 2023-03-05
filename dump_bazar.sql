@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
 --
 -- Host: localhost    Database: bazar_capicua
 -- ------------------------------------------------------
@@ -26,10 +26,12 @@ CREATE TABLE `cliente` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) DEFAULT NULL,
   `apellido` varchar(100) DEFAULT NULL,
+  `direc` varchar(45) DEFAULT NULL,
+  `tel` varchar(45) DEFAULT NULL,
   `estado` varchar(45) DEFAULT NULL,
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +40,7 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-INSERT INTO `cliente` VALUES (1,'Maria','Welter','1','2022-11-22 21:52:42'),(2,'Juan','Grondona','1','2022-11-23 13:37:58'),(3,'Sergio','Paiva','0','2022-11-23 13:39:15'),(4,'Miguel Angel','Torres Fuentes','0','2022-12-16 22:18:08'),(5,'Juan','Perez','1','2023-01-30 19:39:53'),(6,'Sofia Aranza','Grondona','1','2023-01-30 19:42:23'),(7,'Julio ','Sosa','1','2023-01-30 20:36:18'),(8,'Lucio Miguel','Lampard','1','2023-01-31 20:02:46');
+INSERT INTO `cliente` VALUES (1,'Lucas Marcial','Ferro Costa','correa 123','37524546895','1','2023-03-02 22:38:42'),(2,'Matias A','Lopez','roca 1180','423423','1','2023-03-02 12:34:36'),(3,'Daniel','Gener','lavalle 12','3764258259','1','2023-03-02 01:39:04'),(4,'Juan Jose ','Campanella',NULL,NULL,'1','2023-02-26 21:09:47'),(5,'Juan','Perez',NULL,NULL,'1','2023-01-30 19:39:53'),(6,'Sofia Aranza','Grondona',NULL,NULL,'1','2023-01-30 19:42:23'),(7,'Julio ','Sosa',NULL,NULL,'1','2023-01-30 20:36:18'),(8,'Lucio Miguel','Lampard',NULL,NULL,'1','2023-01-31 20:02:46'),(9,'Juan Jose','Campanella',NULL,NULL,'1','2023-02-28 23:14:01'),(10,'Andres',' Timel','la carra 252','123489652','1','2023-03-05 21:56:21');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,7 +82,7 @@ CREATE TABLE `marcas` (
   `estado` varchar(45) DEFAULT '1',
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,7 +91,7 @@ CREATE TABLE `marcas` (
 
 LOCK TABLES `marcas` WRITE;
 /*!40000 ALTER TABLE `marcas` DISABLE KEYS */;
-INSERT INTO `marcas` VALUES (1,'Plasticos C','1','2023-01-17 20:04:00'),(2,'Todo Metal','1','2023-01-17 20:16:00'),(3,'ECCENN','1','2023-01-17 20:20:05'),(4,'Todo Teflon','1','2023-02-11 20:29:45'),(5,'LUMIN TERMOS','1','2023-02-11 20:36:36');
+INSERT INTO `marcas` VALUES (1,'plastico c','1','2023-03-03 01:37:09'),(2,'Todo Metal','1','2023-01-17 20:16:00'),(3,'ECCENN','1','2023-01-17 20:20:05'),(4,'Todo Teflon','1','2023-02-11 20:29:45'),(5,'LUMIN TERMOS','1','2023-02-11 20:36:36'),(6,'encomat','1','2023-03-04 01:17:11');
 /*!40000 ALTER TABLE `marcas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -122,7 +124,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (2,'Jarra','Juguera frut',1,'200','350','1','10','2023-01-18 12:49:09'),(3,'vasos','tereré',1,'80','120','1','20','2023-01-17 20:11:37'),(4,'cuchara','bebé',1,'50','85','1','15','2023-01-17 20:13:36'),(5,'Olla','Paellera',3,'6500','11200','1','8','2023-01-17 20:18:21'),(6,'Asador','Para parrilla',1,'3500','7200','1','10','2023-01-31 22:12:45'),(10,'Palita','Para Sopa',1,'65','150','0','15','2023-02-13 21:54:03');
+INSERT INTO `productos` VALUES (2,'Jarra','Juguera frut',1,'200','350','1','10','2023-01-18 12:49:09'),(3,'vasos','tereré',1,'80','120','1','20','2023-01-17 20:11:37'),(4,'cuchara','bebé',1,'50','85','1','15','2023-01-17 20:13:36'),(5,'Olla','Paellera',3,'6500','11200','1','8','2023-01-17 20:18:21'),(6,'Asador','Para parrilla',1,'3500','7200','1','10','2023-01-31 22:12:45'),(10,'Palita','Para Sopa',1,'65','150','1','15','2023-02-13 21:54:03');
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,7 +143,7 @@ CREATE TABLE `proveedor` (
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `id_productos` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,6 +152,7 @@ CREATE TABLE `proveedor` (
 
 LOCK TABLES `proveedor` WRITE;
 /*!40000 ALTER TABLE `proveedor` DISABLE KEYS */;
+INSERT INTO `proveedor` VALUES (1,'Mercotrade S.R.L.',21305622566,'1','2023-03-05 14:40:09',2);
 /*!40000 ALTER TABLE `proveedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +200,7 @@ CREATE TABLE `usuarios` (
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `idUsuario_UNIQUE` (`id_usuario`),
   UNIQUE KEY `dni_UNIQUE` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +209,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'jrgrondona','$2b$10$1eAhM76VtiAc1boBEK.8r.hD6Mwofg4hOL/5ADIOAWPCB1l097IOO','juangrondona.01@gmail.com','Juan Grondona','1','2023-01-31 14:35:19',NULL),(2,'gvargas','$2b$10$EdWHaN6LT/8CPMbEgHnPxOK5.4MSMYffCC6XkvBoSNR2IuAGDPOuG','gustavo@gmail.com','Vargas Gustavo','1','2023-02-09 20:38:16',NULL);
+INSERT INTO `usuarios` VALUES (1,'jrgrondona','$2b$10$1eAhM76VtiAc1boBEK.8r.hD6Mwofg4hOL/5ADIOAWPCB1l097IOO','juangrondona.01@gmail.com','Juan Grondona','1','2023-01-31 14:35:19',NULL),(2,'gvargas','$2b$10$EdWHaN6LT/8CPMbEgHnPxOK5.4MSMYffCC6XkvBoSNR2IuAGDPOuG','gustavo@gmail.com','Vargas Gustavo','1','2023-02-09 20:38:16',NULL),(21,'jos','$2b$10$y.5V4CyeKqLAEQGEt6TWcOxH87HGdv78ulE3PywW.JQ03H5fEzwWC','jose@jose.com','jose perez','1','2023-02-27 00:48:15',NULL),(22,'ser','$2b$10$RCTq.oaC6tRQcFzrSr655e3t04Ok8hIqC16xWW0CtcbAkGXOl/UDC','jose@jose.com','juan jose','0','2023-02-27 02:48:14',NULL),(23,'m','$2b$10$/nbYqca.i/lx8wJSDXGleeqjjtZHXYjj8Df/xfPm7wo3dQmJtuHr6','dol@goy.com','m lopez','0','2023-02-27 11:48:42',NULL),(24,'jose','$2b$10$ZbBhqfi/SADspMrLg7M1Fu/WI2tScSzJeJPUJyARA2XmyhSP0q5Kq','dol@goy.com','lucas joere','1','2023-03-02 01:41:23',NULL);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -219,4 +222,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-02-16 11:14:53
+-- Dump completed on 2023-03-05 19:14:25
