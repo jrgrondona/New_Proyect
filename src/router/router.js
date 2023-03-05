@@ -446,6 +446,44 @@ router.post('/AgregarMarcas', verificarToken, (req, res) => {
 //////////////////////////
 ///// PROVEEDORES ///////
 ////////////////////////
+//Devuelve a un proveedor puntual
+router.get('/proveedor/:id', verificarToken, (req, res)=>{
+    const  { id } = req.params;
+    jwt.verify(req.token, 'bazarKey', (error, valido)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+            mysqlConeccion.query('select * from proveedor where id=?',[id], (err, registros)=>{
+                if(!err){
+                    res.json(registros);
+                } else {
+                    console.log(err)
+                }
+            })
+        }
+    })
+});
+
+//Se agrega metodo para actualizar datos del proveedor por el metodo PUT
+router.put('/proveedor/:id', verificarToken, (req, res)=>{
+    let id = req.params.id
+    const {nombre , estado,cuil,id_productos} =req.body
+    jwt.verify(req.token, 'bazarKey', (error)=>{
+        if(error){
+            res.sendStatus(403);
+        }else{
+    let query=`UPDATE proveedor SET nombre='${nombre}', estado='${estado}', cuil='${cuil}', id_productos='${id_productos}', tms=NOW() WHERE id='${id}'`;
+            mysqlConeccion.query(query, (err)=>{
+                if(!err){
+                    res.send('Se actualizó datos del proveedor id: '+id+'');
+                   console.log(query)
+                }else{
+                    console.log(err)
+                }
+            });
+        }
+    });
+});
 router.get('/proveedor', verificarToken, (req, res) => {
     jwt.verify(req.token, 'bazarKey', (error) => {
         if (error) {
