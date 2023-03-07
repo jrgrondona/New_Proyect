@@ -683,8 +683,10 @@ router.post('/registro', async (req, res) => {
                 mensaje: "El usuario se creó correctamente"
             });
         } else {
-            res.send('Ocurrio un error desde el servidor' + err);
-        }
+            res.json({
+                status: false,
+                mensaje: "El usuario ya existe"
+        })}
     })
 });
 router.put('/resetpassword/:id', (req, res) => {
