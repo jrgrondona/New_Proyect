@@ -1,10 +1,10 @@
 const express= require('express');
 const app = express();
-// const cors = require('cors')
+const cors = require('cors')
 app.use(express.json());
 /// Se agrega const lista blanca para restringir acceso a mi base de datos a solo el 5173
-// const ListaBlanca = ['http://localhost:5173/']
-// app.use(cors({ListaBlanca}));
+const ListaBlanca = ['http://localhost:5173/']
+app.use(cors({ListaBlanca}));
 
 const morgan =require('morgan');
 //configuraciones
@@ -14,7 +14,7 @@ app.use(morgan('runs'));
 
 app.use(function(req, res, next){
    res.setHeader('Access-Control-Allow-Origin', '*');
-   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE,UPDATE');
+   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE, UPDATE');
    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
    res.setHeader('Access-Control-Allow-Credentials', true);
    next();
