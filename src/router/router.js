@@ -418,6 +418,29 @@ router.delete('/delete/:id_ventas', verificarToken, (req, res) => {
         }
     })
 });
+///// DETALLE DE LA VENTA ////
+router.get('/ventas/:id_ventas', verificarToken, (req, res) => {
+    const id_ventas = req.params.id_ventas;
+    jwt.verify(req.token, 'bazarKey', (error) => {
+        if (error) {
+            res.sendStatus(403);
+        } else {
+            const query = `SELECT c.nombre, c.apellido, c.direc AS direc_cliente, p.nombre AS nombre_producto, v.cantidad 
+                FROM cliente c
+                INNER JOIN ventas v ON c.id = v.id_cliente
+                INNER JOIN productos p ON p.id = v.id_producto
+                WHERE v.id_ventas = ?`;
+            mysqlConeccion.query(query, [id_ventas], (err, result) => {
+                if (!err) {
+                    res.json(result);
+                } else {
+                    console.log(err);
+                    res.status(500).send('Error al ejecutar la consulta SELECT');
+                }
+            });
+        }
+    });
+});
 ////////////////////////////
 ///////// MARCAS ///////////
 ///////////////////////////
