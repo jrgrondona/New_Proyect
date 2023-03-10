@@ -344,6 +344,22 @@ router.get('/ventas', verificarToken, (req, res) => {
         }
     })
 });
+///// DEVUELVE DETALLE TOTAL DE VENTAS ////
+router.get('/todo_ventas', verificarToken,  (req, res) => {
+    jwt.verify(req.token, 'bazarKey', (error) => {
+        if (error) {
+            res.sendStatus(403);
+        } else {
+            mysqlConeccion.query('SELECT c.nombre, c.apellido, c.direc, c.tel, p.nombre AS nombre_producto, v.cantidad, p.precio_venta, v.cantidad * p.precio_venta AS Total FROM cliente c INNER JOIN ventas v ON c.id = v.id_cliente INNER JOIN productos p ON p.id = v.id_producto', (err, registro) => {
+                if (!err) {
+                    res.json(registro);
+                } else {
+                    console.log(err)
+                }
+            })
+        }
+    })
+});
 ///// into ventas ////
 router.post('/ventas', verificarToken, (req, res) => {
     jwt.verify(req.token, 'bazarKey', (error) => {
@@ -425,11 +441,11 @@ router.get('/ventas/:id_ventas', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            const query = `SELECT c.nombre, c.apellido, c.direc AS direc_cliente, p.nombre AS nombre_producto, v.cantidad 
-                FROM cliente c
-                INNER JOIN ventas v ON c.id = v.id_cliente
-                INNER JOIN productos p ON p.id = v.id_producto
-                WHERE v.id_ventas = ?`;
+            const query = `SELECT c.nombre, c.apellido, c.direc, c.tel, p.nombre AS nombre_producto, v.cantidad, p.precio_venta, v.cantidad * p.precio_venta AS Total
+            FROM cliente c
+            INNER JOIN ventas v ON c.id = v.id_cliente
+            INNER JOIN productos p ON p.id = v.id_producto
+            WHERE v.id_ventas = ?`;
             mysqlConeccion.query(query, [id_ventas], (err, result) => {
                 if (!err) {
                     res.json(result);
