@@ -345,7 +345,7 @@ router.get('/ventas', verificarToken, (req, res) => {
     })
 });
 ///// DEVUELVE DETALLE TOTAL DE VENTAS ////
-router.get('/todo_ventas', verificarToken,  (req, res) => {
+router.get('/todo_ventas', verificarToken, (req, res) => {
     jwt.verify(req.token, 'bazarKey', (error) => {
         if (error) {
             res.sendStatus(403);
@@ -373,17 +373,28 @@ router.post('/ventas', verificarToken, (req, res) => {
                     console.log(err);
                     res.status(500).send('Error al obtener información del cliente');
                 } else if (result.length === 0) {
-                    res.status(400).send('El cliente no existe');
+                    res.json({
+                        status: false,
+                        mensaje: 'El cliente no existe, registrelo e intente vuevamente !'
+                    })
                 } else {
                     let productoQuery = `SELECT stock FROM productos WHERE id = ${id_producto}`;
                     mysqlConeccion.query(productoQuery, (err, result) => {
                         if (err) {
                             console.log(err);
                             res.status(500).send('Error al obtener información del producto');
+                        } else if (result.length === 0) { // si no hay resultados
+                            res.json({
+                                status: false,
+                                mensaje: 'El producto no existe, registrelo e intente vuevamente !'
+                            })
                         } else {
                             const stock = result[0].stock;
                             if (stock < Cantidad) {
-                                res.status(400).send('La cantidad solicitada es mayor que el stock disponible.');
+                                res.json({
+                                    status: false,
+                                    mensaje: 'La cantidad solicitada es mayor que el stock disponible !'
+                                })
                                 return;
                             }
                             let updateQuery = `UPDATE productos SET stock = stock - ${Cantidad} WHERE id = ${id_producto}`;
@@ -400,7 +411,10 @@ router.post('/ventas', verificarToken, (req, res) => {
                                             console.log(err);
                                             res.status(500).send('Error al agregar la venta');
                                         } else {
-                                            res.send('Se agregó nueva venta');
+                                            res.json({
+                                                status: true,
+                                                mensaje: 'Se agregó nueva venta correctamente !'
+                                            })
                                         }
                                     });
                                 }
@@ -816,7 +830,8 @@ router.post('/registro', async (req, res) => {
             res.json({
                 status: false,
                 mensaje: "El usuario ya existe"
-        })}
+            })
+        }
     })
 });
 router.put('/resetpassword/:id', (req, res) => {
