@@ -595,17 +595,27 @@ router.post('/AgregarMarcas', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            let query = `INSERT INTO marcas (nombre, tms) VALUES ('${nombre}',NOW())`;
-            mysqlConeccion.query(query, (err, registros) => {
-                if (!err) {
-                    res.json({
-                        status: true,
-                        mensaje: 'Se agregó nueva marca'
+            let querySelect = `SELECT * FROM marcas WHERE nombre = '${nombre}'`;
+            mysqlConeccion.query(querySelect, (errSelect, registros) => {
+                if (!errSelect && registros.length === 0) {
+                    let queryInsert = `INSERT INTO marcas (nombre, tms) VALUES ('${nombre}',NOW())`;
+                    mysqlConeccion.query(queryInsert, (errInsert, registrosInsert) => {
+                        if (!errInsert) {
+                            res.json({
+                                status: true,
+                                mensaje: 'Se agregó nueva marca'
+                            })
+                        } else {
+                            res.json({
+                                status: false,
+                                mensaje: 'No se pudo agregar la marca'
+                            })
+                        }
                     })
                 } else {
                     res.json({
                         status: false,
-                        mensaje: 'La Marca ingresada ya se encuentra registrada en el listado!'
+                        mensaje: 'La marca ingresada ya se encuentra registrada en el listado'
                     })
                 }
             })

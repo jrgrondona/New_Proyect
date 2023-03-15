@@ -81,9 +81,8 @@ CREATE TABLE `marcas` (
   `nombre` varchar(100) DEFAULT NULL,
   `estado` varchar(45) DEFAULT '1',
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `nombre_UNIQUE` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -92,7 +91,7 @@ CREATE TABLE `marcas` (
 
 LOCK TABLES `marcas` WRITE;
 /*!40000 ALTER TABLE `marcas` DISABLE KEYS */;
-INSERT INTO `marcas` VALUES (1,'Plasticos Central','1','2023-03-04 14:10:11'),(2,'Todo Metal','1','2023-01-17 20:16:00'),(3,'ECCENN','1','2023-01-17 20:20:05');
+INSERT INTO `marcas` VALUES (1,'Plasticos Central','1','2023-03-04 14:10:11'),(2,'Todo Metal','1','2023-01-17 20:16:00'),(3,'ECCENN','1','2023-01-17 20:20:05'),(4,'Prueba','1','2023-03-15 18:52:51'),(5,'Prueba 2','1','2023-03-15 19:10:19');
 /*!40000 ALTER TABLE `marcas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,4 +225,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-15 15:32:07
+-- Dump completed on 2023-03-15 16:12:06
