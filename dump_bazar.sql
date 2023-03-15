@@ -31,7 +31,7 @@ CREATE TABLE `cliente` (
   `estado` varchar(45) DEFAULT '1',
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-INSERT INTO `cliente` VALUES (1,'MARIA ','RODRIGUEZ','GARUHAPE','3743433200','1','2023-03-10 14:19:17'),(2,'FERNANDO','BAEZ','ELDORADO','3755456522','1','2023-03-06 19:31:33'),(3,'ROSA','ROMERO','BUENOS AIRES','1169583155','1','2023-03-06 19:31:55'),(4,'Miguel Angel','Torres Fuentes','SAN PEDRO','3758465896','1','2023-03-06 19:32:14'),(5,'Juan','Perez','WANDA','3743566588','1','2023-03-06 19:33:20'),(6,'Sofia Aranza','Grondona','GARUHAPE','3743000000','1','2023-03-06 19:33:41');
+INSERT INTO `cliente` VALUES (1,'MARIA EUGENIA','RODRIGUEZ ','GARUHAPE','3743433200 ','1','2023-03-15 15:42:03'),(2,'FERNANDO','BAEZ','ELDORADO','3755456522','1','2023-03-06 19:31:33'),(3,'ROSA','ROMERO','BUENOS AIRES','1169583155','1','2023-03-06 19:31:55'),(4,'Miguel Angel','Torres Fuentes','SAN PEDRO','3758465896','1','2023-03-06 19:32:14'),(5,'Juan Ramón','Grondona','Garuhapé','3757433200','1','2023-03-15 18:25:55');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,8 +81,9 @@ CREATE TABLE `marcas` (
   `nombre` varchar(100) DEFAULT NULL,
   `estado` varchar(45) DEFAULT '1',
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre_UNIQUE` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +92,7 @@ CREATE TABLE `marcas` (
 
 LOCK TABLES `marcas` WRITE;
 /*!40000 ALTER TABLE `marcas` DISABLE KEYS */;
-INSERT INTO `marcas` VALUES (1,'Plasticos Central','1','2023-03-04 14:10:11'),(2,'Todo Metal','1','2023-01-17 20:16:00'),(3,'ECCENN','1','2023-01-17 20:20:05'),(4,'LA BATEA','1','2023-03-10 14:14:28');
+INSERT INTO `marcas` VALUES (1,'Plasticos Central','1','2023-03-04 14:10:11'),(2,'Todo Metal','1','2023-01-17 20:16:00'),(3,'ECCENN','1','2023-01-17 20:20:05');
 /*!40000 ALTER TABLE `marcas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,18 +105,18 @@ DROP TABLE IF EXISTS `productos`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `productos` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id_marca` int unsigned NOT NULL,
   `nombre` varchar(100) DEFAULT NULL,
   `descripcion` varchar(100) DEFAULT NULL,
-  `id_marca` int unsigned NOT NULL,
   `precio_costo` double(10,2) DEFAULT NULL,
   `precio_venta` double(10,2) DEFAULT NULL,
   `estado` varchar(45) DEFAULT '1',
   `stock` double DEFAULT NULL,
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `id_marca` (`id_marca`),
-  CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`id_marca`) REFERENCES `marcas` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `productos` (`id_marca`),
+  CONSTRAINT `productos` FOREIGN KEY (`id_marca`) REFERENCES `marcas` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +125,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (2,'JARRA PORRON','JUGUERA ',1,200.00,350.00,'1',14800,'2023-03-07 23:55:02'),(3,'vasos','tereré',1,80.00,223.00,'1',8302,'2023-03-04 13:18:10'),(4,'CUCHARA ','BEBE',1,50.00,85.00,'1',1650,'2023-03-07 20:45:50'),(5,'Olla','Paellera',3,6500.00,11200.00,'1',9860,'2023-03-07 20:45:59'),(6,'Asador','Para parrilla',1,3500.00,7200.00,'1',150,'2023-03-06 20:01:48'),(7,'MATE','PRUEBA',1,150.00,2500.00,'1',100,'2023-03-10 14:09:46');
+INSERT INTO `productos` VALUES (1,1,'JARRA CERVECERO','JUGUERA ',200.00,350.00,'1',215,'2023-03-10 22:18:31'),(2,1,'vasos','tereré',80.00,223.00,'1',7672,'2023-03-04 13:18:10'),(3,1,'CUCHARA ','BEBE',50.00,85.00,'1',1650,'2023-03-07 20:45:50'),(4,3,'Olla','Paellera',6500.00,11200.00,'1',9810,'2023-03-07 20:45:59');
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,9 +142,9 @@ CREATE TABLE `proveedor` (
   `cuil` decimal(50,0) DEFAULT NULL,
   `estado` varchar(45) DEFAULT '1',
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `id_productos` int unsigned NOT NULL,
+  `id_productos` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +153,7 @@ CREATE TABLE `proveedor` (
 
 LOCK TABLES `proveedor` WRITE;
 /*!40000 ALTER TABLE `proveedor` DISABLE KEYS */;
-INSERT INTO `proveedor` VALUES (1,'Siner S.R.L',20259887890,'1','2023-02-23 19:43:09',2),(2,'El Condor',20502221110,'1','2023-02-25 15:14:11',2),(3,'MICHELL',30502564560,'1','2023-03-09 14:09:47',3);
+INSERT INTO `proveedor` VALUES (1,'Siner S.R.L',20259887890,'1','2023-03-15 18:30:25',1),(2,'El Condor',20502221110,'1','2023-02-25 15:14:11',2),(3,'MICHELL',30502564560,'1','2023-03-09 14:09:47',3),(4,'Prueba',20299534694,'1','2023-03-15 18:30:41',4);
 /*!40000 ALTER TABLE `proveedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -203,7 +204,7 @@ CREATE TABLE `ventas` (
   `Estado` varchar(45) DEFAULT '1',
   `tms` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_ventas`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -212,7 +213,7 @@ CREATE TABLE `ventas` (
 
 LOCK TABLES `ventas` WRITE;
 /*!40000 ALTER TABLE `ventas` DISABLE KEYS */;
-INSERT INTO `ventas` VALUES (1,1,2,1500.00,'1','2023-03-05 19:00:00'),(2,2,3,188.00,'1','2023-03-07 21:51:38'),(3,2,2,250.00,'1','2023-03-08 00:06:57'),(4,6,2,1000.00,'1','2023-03-09 14:06:13'),(5,1,2,5.00,'','2023-03-10 14:04:21');
+INSERT INTO `ventas` VALUES (1,2,2,50.00,'1','2023-03-13 19:47:40'),(2,2,2,100.00,'1','2023-03-15 18:28:27'),(3,5,4,50.00,'1','2023-03-15 18:28:59');
 /*!40000 ALTER TABLE `ventas` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -225,4 +226,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-10 12:00:23
+-- Dump completed on 2023-03-15 15:32:07

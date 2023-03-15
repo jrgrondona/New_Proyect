@@ -47,8 +47,6 @@ router.get('/cliente/:id', verificarToken, (req, res) => {
         }
     })
 });
-
-
 //metodo para insertar cliente por el metodo POST
 router.post('/cliente', verificarToken, (req, res) => {
     const { nombre, apellido, tel, direc, estado } = req.body
@@ -56,15 +54,31 @@ router.post('/cliente', verificarToken, (req, res) => {
         if (error) {
             res.sendStatus(403);
         } else {
-            let query = `INSERT INTO cliente (nombre, apellido,tel,direc, tms) VALUES ('${nombre}','${apellido}', '${tel}','${direc}',NOW())`;
-            mysqlConeccion.query(query, (err, registros) => {
-                if (!err) {
-                    res.send('Se agregó nuevo cliente : ' + nombre);
+            let querySelect = `SELECT COUNT(*) AS count FROM cliente WHERE nombre = '${nombre}' AND apellido = '${apellido}' AND tel = '${tel}' AND direc = '${direc}'`;
+              mysqlConeccion.query(querySelect, (errSelect, resultSelect) => {
+                if (!errSelect && resultSelect[0].count === 0) {
+                    let queryInsert = `INSERT INTO cliente (nombre, apellido, tel, direc, tms) VALUES ('${nombre}', '${apellido}', '${tel}', '${direc}', NOW())`;
+                    mysqlConeccion.query(queryInsert, (errInsert, resultInsert) => {
+                        if (!errInsert) {
+                            res.json({
+                                status: true,
+                                mensaje: 'Se agregó nuevo cliente'
+                            })
+                        } else {
+                            console.log(errInsert);
+                        }
+                    });
+                } else if (!errSelect) {
+                    res.json({
+                        status: false,
+                        mensaje: 'Ya existe un cliente con los mismos datos'
+                    })
                 } else {
-                    console.log(err)
+                    console.log(errSelect);
                 }
-            })
-        }
+            });
+        };
+
     })
 });
 //Se agrega metodo para actualizar datos del cliente por el metodo PUT
@@ -87,7 +101,6 @@ router.put('/cliente/:id', verificarToken, (req, res) => {
         }
     });
 });
-
 //Eliminacion logica de clientes por delete.
 router.put('/cliente/:id', verificarToken, (req, res) => {
     let id = req.params.id;
@@ -241,9 +254,15 @@ router.post('/agregarproductos', verificarToken, (req, res) => {
     VALUES ('${nombre}','${descripcion}','${id_marca}','${precio_costo}', '${precio_venta}','${stock}',NOW())`;
             mysqlConeccion.query(query, (err) => {
                 if (!err) {
-                    res.send('Se inserto correctamente nuestros datos');
+                    res.json({
+                        status: true,
+                        mensaje: 'Se inserto correctamente el producto'
+                    })
                 } else {
-                    console.log(err)
+                    res.json({
+                        status: false,
+                        mensaje: 'El id de marca no existe, registrelo e intente nuevamente!'
+                    })
                 }
             })
         }
@@ -579,9 +598,15 @@ router.post('/AgregarMarcas', verificarToken, (req, res) => {
             let query = `INSERT INTO marcas (nombre, tms) VALUES ('${nombre}',NOW())`;
             mysqlConeccion.query(query, (err, registros) => {
                 if (!err) {
-                    res.send('Se agregó nueva marca : ' + nombre);
+                    res.json({
+                        status: true,
+                        mensaje: 'Se agregó nueva marca'
+                    })
                 } else {
-                    console.log(err)
+                    res.json({
+                        status: false,
+                        mensaje: 'La Marca ingresada ya se encuentra registrada en el listado!'
+                    })
                 }
             })
         }
@@ -654,9 +679,15 @@ router.post('/agregarproveedor', verificarToken, (req, res) => {
     VALUES ('${nombre}','${cuil}','${id_productos}',NOW())`;
             mysqlConeccion.query(query, (err) => {
                 if (!err) {
-                    res.send('Se inserto correctamente nuestros datos');
+                    res.json({
+                        status: true,
+                        mensaje: 'El proveedor se creó con exito'
+                    })
                 } else {
-                    console.log(err)
+                    res.json({
+                        status: false,
+                        mensaje: 'Cuil debe ser de tipo numerico'
+                    })
                 }
             })
         }
